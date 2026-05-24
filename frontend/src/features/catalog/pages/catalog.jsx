@@ -445,7 +445,11 @@ const CatalogPage = () => {
 				</div>
 			</section>
 			<Toast message={toast.message} visible={toast.visible} />
-
+			<CartDrawer
+  open={cartOpen}
+  onClose={() => setCartOpen(false)}
+/>
+						
 			{showProductModal && selectedProduct && (
 				<ProductModal
 					product={selectedProduct}
