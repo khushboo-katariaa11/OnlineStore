@@ -8,11 +8,11 @@ const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
-const allowedOrigins = (process.env.FRONTEND_URL)
-	.split(',')
-	.map((o) => o.trim())
-	.filter(Boolean);
-
+const allowedOrigins = process.env.FRONTEND_URL
+	? process.env.FRONTEND_URL.split(',')
+			.map((o) => o.trim())
+			.filter(Boolean)
+	: [];
 app.set('trust proxy', 1);
 
 app.use(
@@ -23,13 +23,7 @@ app.use(
 
 app.use(
 	cors({
-		origin(origin, callback) {
-			if (!origin || allowedOrigins.includes(origin)) {
-				callback(null, true);
-			} else {
-				callback(null, false);
-			}
-		},
+		origin: true,
 		credentials: true,
 	})
 );
