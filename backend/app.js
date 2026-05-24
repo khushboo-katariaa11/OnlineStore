@@ -15,26 +15,28 @@ const allowedOrigins = process.env.FRONTEND_URL
 	: [];
 app.set('trust proxy', 1);
 
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+
+
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
+
+app.options('*', cors());
 app.use(
 	helmet({
 		crossOriginResourcePolicy: { policy: 'cross-origin' },
 	})
 );
 
-app.use(
-	cors({
-		origin(origin, callback) {
-			if (!origin || allowedOrigins.includes(origin)) {
-				callback(null, true);
-			} else {
-				callback(null, false);
-			}
-		},
-		credentials: true,
-	})
-);
-
-app.use(apiRateLimiter);
+// app.use(apiRateLimiter);
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 
@@ -42,6 +44,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const authRoutes = require('./routes/auth.routes');
 const productRoutes = require('./routes/product.routes');
+
+
 
 app.get('/health', (req, res) => {
 	res.json({ status: 'ok', timestamp: new Date().toISOString() });
