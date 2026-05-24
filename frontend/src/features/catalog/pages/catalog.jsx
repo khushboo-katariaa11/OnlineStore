@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useCart } from '../../cart/cart.context';
 import Layout from '../../../components/Layout';
 import CartDrawer, { Toast } from '../../../components/CartDrawer';
@@ -16,6 +16,7 @@ import './catalog.css';
 
 const CatalogPage = () => {
 	const { getCartCount, addToCart } = useCart();
+	const mapContainer = useRef(null);
 
 	const [categories, setCategories] = useState([]);
 	const [selectedCategory, setSelectedCategory] = useState(null);
@@ -53,6 +54,37 @@ const CatalogPage = () => {
 		})();
 		return () => {
 			cancelled = true;
+		};
+	}, []);
+
+	useEffect(() => {
+		if (!mapContainer.current) return;
+
+		// Initialize map on store location: 28.5244°N, 77.1253°E
+		const map = window.L.map(mapContainer.current).setView([28.5244, 77.1253], 15);
+
+		// Add OpenStreetMap tiles
+		window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '© OpenStreetMap contributors',
+			maxZoom: 19,
+		}).addTo(map);
+
+		// Add marker at shop location
+		window.L.marker([28.5244, 77.1253])
+			.bindPopup(
+				`<div style="font-family: DM Sans, sans-serif; font-size: 14px;">
+					<strong style="color: #8b2942; font-size: 16px;">WomenHub</strong><br/>
+					WZ-3/1 Plot 17<br/>
+					Vishnu Garden<br/>
+					New Delhi 110018<br/>
+					<strong style="color: #8b2942;">📞 +91 83681 67140</strong>
+				</div>`
+			)
+			.addTo(map)
+			.openPopup();
+
+		return () => {
+			map.remove();
 		};
 	}, []);
 
@@ -365,7 +397,53 @@ const CatalogPage = () => {
 				</div>
 			</div>
 
-			<CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+			<section className="contact-section" aria-label="Contact us">
+				<div className="contact-section__wrap">
+					<div className="contact-section__header">
+						<h2 className="contact-section__title">Get in Touch</h2>
+						<p className="contact-section__subtitle">We'd love to hear from you! Reach out via WhatsApp or visit our store.</p>
+						<div className="contact-section__accent-bar" />
+					</div>
+					
+					<div className="contact-section__grid">
+						<div className="contact-card contact-card--whatsapp">
+							<div className="contact-card__icon">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+									<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+									<path d="M9 10h.01M13 10h.01" />
+									<path d="M11 14h.01" />
+								</svg>
+							</div>
+							<h3 className="contact-card__heading">Quick Chat</h3>
+							<p className="contact-card__description">Message us on WhatsApp for instant replies and product information</p>
+							<a 
+								href={`https://wa.me/${SHOP.whatsappNumber}?text=Hi%20WomenHub%2C%20I%20have%20a%20question%20about%20your%20products`}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="contact-card__button"
+							>
+								Open WhatsApp
+							</a>
+						</div>
+
+						<div className="contact-card contact-card--address">
+							<div className="contact-card__icon">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+									<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+									<circle cx="12" cy="10" r="3" />
+								</svg>
+							</div>
+							<h3 className="contact-card__heading">Visit Our Store</h3>
+							<p className="contact-card__description">{SHOP.address}</p>
+							<p className="contact-card__phone">{SHOP.phone}</p>
+						</div>
+					</div>
+
+					<div className="contact-section__map-container">
+						<div className="contact-section__map" ref={mapContainer} />
+					</div>
+				</div>
+			</section>
 			<Toast message={toast.message} visible={toast.visible} />
 
 			{showProductModal && selectedProduct && (

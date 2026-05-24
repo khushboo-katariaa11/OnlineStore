@@ -5,6 +5,9 @@ export const SHOP = {
 	tagline: 'Laces · Tailoring · Buttons',
 	description:
 		'Premium laces, tailoring fabrics, threads, and designer buttons for boutiques, tailors, and home sewists.',
+	address: 'wz-3/1 Plot 17 Vishnu Garden, New Delhi 110018',
+	phone: '+91 83681 67140',
+	whatsappNumber: '918368167140',
 };
 
 /** Local images in /public/shop/ */
