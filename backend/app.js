@@ -23,7 +23,13 @@ app.use(
 
 app.use(
 	cors({
-		origin: true,
+		origin(origin, callback) {
+			if (!origin || allowedOrigins.includes(origin)) {
+				callback(null, true);
+			} else {
+				callback(null, false);
+			}
+		},
 		credentials: true,
 	})
 );
