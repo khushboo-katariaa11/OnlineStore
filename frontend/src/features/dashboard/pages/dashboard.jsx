@@ -17,12 +17,15 @@ const DashboardPage = () => {
 		error,
 		handleGetAllProducts,
 		handleAddProduct,
+		handleUpdateProduct,
 		handleDeleteProduct,
 		handleViewProduct,
 	} = useDashboard();
 
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [showAddForm, setShowAddForm] = useState(false);
+	const [showEditForm, setShowEditForm] = useState(false);
+	const [editingProductId, setEditingProductId] = useState(null);
 	const [selectedProduct, setSelectedProduct] = useState(null);
 	const [showViewModal, setShowViewModal] = useState(false);
 	const [formLoading, setFormLoading] = useState(false);
@@ -98,6 +101,79 @@ const DashboardPage = () => {
 		} finally {
 			setFormLoading(false);
 		}
+	};
+
+	const handleEditClick = async (productId) => {
+		try {
+			const product = await handleViewProduct(productId);
+			setFormData({
+				category: product.category,
+				subcategory: product.subcategory || '',
+				name: product.name,
+				price: product.price,
+				description: product.description,
+				colors: Array.isArray(product.colors) ? product.colors.join(', ') : product.colors,
+				image: null,
+			});
+			setEditingProductId(productId);
+			setShowEditForm(true);
+			setFormError('');
+		} catch (err) {
+			alert(`Failed to load product: ${err.message}`);
+		}
+	};
+
+	const handleSubmitEditProduct = async (e) => {
+		e.preventDefault();
+		setFormError('');
+		setFormLoading(true);
+
+		try {
+			if (!formData.category || !formData.name || !formData.price || !formData.description || !formData.colors) {
+				setFormError('All fields except subcategory are required');
+				setFormLoading(false);
+				return;
+			}
+			if (!token) {
+				setFormError('You must be logged in to update products');
+				setFormLoading(false);
+				return;
+			}
+
+			const data = createProductFormData(formData, formData.image);
+			await handleUpdateProduct(editingProductId, data);
+
+			setFormData({
+				category: '',
+				subcategory: '',
+				name: '',
+				price: '',
+				description: '',
+				colors: '',
+				image: null,
+			});
+			setShowEditForm(false);
+			setEditingProductId(null);
+		} catch (err) {
+			setFormError(err.message || 'Failed to update product');
+		} finally {
+			setFormLoading(false);
+		}
+	};
+
+	const handleCloseEditForm = () => {
+		setShowEditForm(false);
+		setEditingProductId(null);
+		setFormData({
+			category: '',
+			subcategory: '',
+			name: '',
+			price: '',
+			description: '',
+			colors: '',
+			image: null,
+		});
+		setFormError('');
 	};
 
 	const handleDeleteClick = async (productId) => {
@@ -251,6 +327,13 @@ const DashboardPage = () => {
 											onClick={() => handleViewClick(product._id)}
 										>
 											View
+										</button>
+										<button
+											type="button"
+											className="dashboard-btn dashboard-btn--sm dashboard-btn--primary"
+											onClick={() => handleEditClick(product._id)}
+										>
+											Edit
 										</button>
 										<button
 											type="button"
@@ -430,6 +513,124 @@ const DashboardPage = () => {
 								</p>
 							</div>
 						</div>
+					</div>
+				</div>
+			)}
+
+			{showEditForm && (
+				<div className="dashboard-modal-overlay" onClick={handleCloseEditForm}>
+					<div className="dashboard-modal" onClick={(e) => e.stopPropagation()}>
+						<div className="dashboard-modal__header">
+							<h2>Edit Product</h2>
+							<button
+								type="button"
+								className="dashboard-modal__close"
+								onClick={handleCloseEditForm}
+								aria-label="Close"
+							>
+								<CloseIcon />
+							</button>
+						</div>
+						{formError && <div className="dashboard-alert">{formError}</div>}
+						<form onSubmit={handleSubmitEditProduct} className="dashboard-form">
+							<div className="dashboard-form__field">
+								<label>Category *</label>
+								<input
+									type="text"
+									name="category"
+									value={formData.category}
+									onChange={handleInputChange}
+									placeholder="e.g. Clothing"
+									disabled={formLoading}
+									required
+								/>
+							</div>
+							<div className="dashboard-form__field">
+								<label>Subcategory</label>
+								<input
+									type="text"
+									name="subcategory"
+									value={formData.subcategory}
+									onChange={handleInputChange}
+									placeholder="e.g. Dresses"
+									disabled={formLoading}
+								/>
+							</div>
+							<div className="dashboard-form__field">
+								<label>Name *</label>
+								<input
+									type="text"
+									name="name"
+									value={formData.name}
+									onChange={handleInputChange}
+									disabled={formLoading}
+									required
+								/>
+							</div>
+							<div className="dashboard-form__field">
+								<label>Price *</label>
+								<input
+									type="number"
+									name="price"
+									value={formData.price}
+									onChange={handleInputChange}
+									step="0.01"
+									min="0"
+									disabled={formLoading}
+									required
+								/>
+							</div>
+							<div className="dashboard-form__field">
+								<label>Description *</label>
+								<textarea
+									name="description"
+									value={formData.description}
+									onChange={handleInputChange}
+									rows={3}
+									disabled={formLoading}
+									required
+								/>
+							</div>
+							<div className="dashboard-form__field">
+								<label>Colors (comma separated) *</label>
+								<input
+									type="text"
+									name="colors"
+									value={formData.colors}
+									onChange={handleInputChange}
+									placeholder="Red, Blue, Green"
+									disabled={formLoading}
+									required
+								/>
+							</div>
+							<div className="dashboard-form__field">
+								<label>Image (leave empty to keep current image)</label>
+								<input
+									type="file"
+									name="image"
+									onChange={handleInputChange}
+									accept="image/*"
+									disabled={formLoading}
+								/>
+							</div>
+							<div className="dashboard-form__actions">
+								<button
+									type="submit"
+									className="dashboard-btn dashboard-btn--primary"
+									disabled={formLoading}
+								>
+									{formLoading ? 'Updating…' : 'Update Product'}
+								</button>
+								<button
+									type="button"
+									className="dashboard-btn dashboard-btn--ghost"
+									onClick={handleCloseEditForm}
+									disabled={formLoading}
+								>
+									Cancel
+								</button>
+							</div>
+						</form>
 					</div>
 				</div>
 			)}

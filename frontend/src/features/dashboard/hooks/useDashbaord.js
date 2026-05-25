@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useDashboardContext } from '../dashboard.context';
-import { getAllProducts, addProduct, deleteProduct, getProductById } from '../dashboard.api';
+import { getAllProducts, addProduct, updateProduct, deleteProduct, getProductById } from '../dashboard.api';
 
 export function useDashboard() {
 	const {
@@ -110,6 +110,28 @@ export function useDashboard() {
 		[setLoading, setError]
 	);
 
+	/**
+	 * Update a product by ID
+	 */
+	const handleUpdateProduct = useCallback(
+		async (productId, formData) => {
+			setLoading(true);
+			setError(null);
+			try {
+				const updatedProduct = await updateProduct(productId, formData);
+				setProducts(prev => prev.map(p => p._id === productId ? updatedProduct : p));
+				return updatedProduct;
+			} catch (err) {
+				const errorMessage = err.message || 'Failed to update product';
+				setError(errorMessage);
+				throw err;
+			} finally {
+				setLoading(false);
+			}
+		},
+		[setProducts, setLoading, setError]
+	);
+
 	return {
 		// State
 		products,
@@ -122,6 +144,7 @@ export function useDashboard() {
 		// Methods
 		handleGetAllProducts,
 		handleAddProduct,
+		handleUpdateProduct,
 		handleDeleteProduct,
 		handleViewProduct
 	};
