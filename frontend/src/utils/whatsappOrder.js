@@ -30,7 +30,7 @@ export function formatWhatsAppOrderMessage(cartItems, total, customerNote = '') 
 		const price = Number(item.price);
 		const lineTotal = price * item.quantity;
 		const category = item.category ? ` (${item.category})` : '';
-		lines.push(`${index + 1}. *${item.name}*${category}`);
+		lines.push(`${index + 1}. Item${category}`);
 		lines.push(`   Qty: ${item.quantity} × ₹${price.toLocaleString('en-IN')} = ₹${lineTotal.toLocaleString('en-IN')}`);
 		if (item.subcategory) {
 			lines.push(`   Type: ${item.subcategory}`);

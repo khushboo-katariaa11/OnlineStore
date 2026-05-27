@@ -67,7 +67,7 @@ const DashboardPage = () => {
 		setFormLoading(true);
 
 		try {
-			if (!formData.category || !formData.name || !formData.price || !formData.description || !formData.colors) {
+			if (!formData.category || !formData.price || !formData.colors) {
 				setFormError('All fields except subcategory are required');
 				setFormLoading(false);
 				return;
@@ -109,9 +109,7 @@ const DashboardPage = () => {
 			setFormData({
 				category: product.category,
 				subcategory: product.subcategory || '',
-				name: product.name,
 				price: product.price,
-				description: product.description,
 				colors: Array.isArray(product.colors) ? product.colors.join(', ') : product.colors,
 				image: null,
 			});
@@ -129,7 +127,7 @@ const DashboardPage = () => {
 		setFormLoading(true);
 
 		try {
-			if (!formData.category || !formData.name || !formData.price || !formData.description || !formData.colors) {
+			if (!formData.category || !formData.price || !formData.colors) {
 				setFormError('All fields except subcategory are required');
 				setFormLoading(false);
 				return;
@@ -301,7 +299,7 @@ const DashboardPage = () => {
 									<div className="dashboard-card__image">
 										<img
 											src={getFullImageUrl(product.image)}
-											alt={product.name}
+											alt="Product"
 											loading="lazy"
 											onError={(e) => {
 												e.target.src = PLACEHOLDER_IMAGE;
@@ -309,13 +307,7 @@ const DashboardPage = () => {
 										/>
 									</div>
 									<div className="dashboard-card__body">
-										<h3>{product.name}</h3>
 										<span className="dashboard-card__badge">{product.category}</span>
-										<p className="dashboard-card__desc">
-											{product.description.length > 72
-												? `${product.description.slice(0, 72)}…`
-												: product.description}
-										</p>
 										<p className="dashboard-card__price">
 											₹{Number(product.price).toLocaleString('en-IN')}
 										</p>
@@ -390,17 +382,6 @@ const DashboardPage = () => {
 								/>
 							</div>
 							<div className="dashboard-form__field">
-								<label>Name *</label>
-								<input
-									type="text"
-									name="name"
-									value={formData.name}
-									onChange={handleInputChange}
-									disabled={formLoading}
-									required
-								/>
-							</div>
-							<div className="dashboard-form__field">
 								<label>Price *</label>
 								<input
 									type="number"
@@ -409,17 +390,6 @@ const DashboardPage = () => {
 									onChange={handleInputChange}
 									step="0.01"
 									min="0"
-									disabled={formLoading}
-									required
-								/>
-							</div>
-							<div className="dashboard-form__field">
-								<label>Description *</label>
-								<textarea
-									name="description"
-									value={formData.description}
-									onChange={handleInputChange}
-									rows={3}
 									disabled={formLoading}
 									required
 								/>
@@ -473,45 +443,41 @@ const DashboardPage = () => {
 				<div className="dashboard-modal-overlay" onClick={() => setShowViewModal(false)}>
 					<div className="dashboard-modal dashboard-modal--wide" onClick={(e) => e.stopPropagation()}>
 						<div className="dashboard-modal__header">
-							<h2>{selectedProduct.name}</h2>
-							<button
-								type="button"
-								className="dashboard-modal__close"
-								onClick={() => setShowViewModal(false)}
-								aria-label="Close"
-							>
-								<CloseIcon />
-							</button>
+						<button
+							type="button"
+							className="dashboard-modal__close"
+							onClick={() => setShowViewModal(false)}
+							aria-label="Close"
+						>
+							<CloseIcon />
+						</button>
+					</div>
+					<div className="dashboard-view">
+						<img
+							src={getFullImageUrl(selectedProduct.image)}
+							alt="Product"
+							className="dashboard-view__img"
+						/>
+						<div className="dashboard-view__details">
+							<p>
+								<strong>Category:</strong> {selectedProduct.category}
+							</p>
+							{selectedProduct.subcategory && (
+								<p>
+									<strong>Subcategory:</strong> {selectedProduct.subcategory}
+								</p>
+							)}
+							<p>
+								<strong>Price:</strong> ₹
+								{Number(selectedProduct.price).toLocaleString('en-IN')}
+							</p>
+							<p>
+								<strong>Colors:</strong>{' '}
+								{Array.isArray(selectedProduct.colors)
+									? selectedProduct.colors.join(', ')
+									: selectedProduct.colors}
+							</p>
 						</div>
-						<div className="dashboard-view">
-							<img
-								src={getFullImageUrl(selectedProduct.image)}
-								alt={selectedProduct.name}
-								className="dashboard-view__img"
-							/>
-							<div className="dashboard-view__details">
-								<p>
-									<strong>Category:</strong> {selectedProduct.category}
-								</p>
-								{selectedProduct.subcategory && (
-									<p>
-										<strong>Subcategory:</strong> {selectedProduct.subcategory}
-									</p>
-								)}
-								<p>
-									<strong>Price:</strong> ₹
-									{Number(selectedProduct.price).toLocaleString('en-IN')}
-								</p>
-								<p>
-									<strong>Description:</strong> {selectedProduct.description}
-								</p>
-								<p>
-									<strong>Colors:</strong>{' '}
-									{Array.isArray(selectedProduct.colors)
-										? selectedProduct.colors.join(', ')
-										: selectedProduct.colors}
-								</p>
-							</div>
 						</div>
 					</div>
 				</div>
@@ -557,17 +523,6 @@ const DashboardPage = () => {
 								/>
 							</div>
 							<div className="dashboard-form__field">
-								<label>Name *</label>
-								<input
-									type="text"
-									name="name"
-									value={formData.name}
-									onChange={handleInputChange}
-									disabled={formLoading}
-									required
-								/>
-							</div>
-							<div className="dashboard-form__field">
 								<label>Price *</label>
 								<input
 									type="number"
@@ -576,17 +531,6 @@ const DashboardPage = () => {
 									onChange={handleInputChange}
 									step="0.01"
 									min="0"
-									disabled={formLoading}
-									required
-								/>
-							</div>
-							<div className="dashboard-form__field">
-								<label>Description *</label>
-								<textarea
-									name="description"
-									value={formData.description}
-									onChange={handleInputChange}
-									rows={3}
 									disabled={formLoading}
 									required
 								/>

@@ -48,7 +48,7 @@ const formatProducts = (products) => {
 // Add a new product
 const addProductController = async (req, res) => {
 	try {
-		const { category, subcategory, name, price, description } = req.body;
+		const { category, subcategory, price } = req.body;
 		let { colors } = req.body;
 		let image = req.body.image;
 		if (req.file) {
@@ -58,10 +58,10 @@ const addProductController = async (req, res) => {
 		if (typeof colors === 'string') {
 			colors = colors.split(',').map(c => c.trim());
 		}
-		if (!category || !name || !image || !price || !description || !colors) {
+		if (!category || !image || !price || !colors) {
 			return res.status(400).json({ message: 'All fields except subcategory are required.' });
 		}
-		const product = new Product({ category, subcategory, name, image, price, description, colors });
+		const product = new Product({ category, subcategory, image, price, colors });
 		await product.save();
 		res.status(201).json(formatProduct(product));
 	} catch (error) {
@@ -123,7 +123,7 @@ const getProductByIdController = async (req, res) => {
 const updateProductController = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const { category, subcategory, name, price, description } = req.body;
+		const { category, subcategory, price } = req.body;
 		let { colors } = req.body;
 		let image = req.body.image;
 		if (req.file) {
@@ -139,10 +139,8 @@ const updateProductController = async (req, res) => {
 		}
 		if (category) product.category = category;
 		if (subcategory !== undefined) product.subcategory = subcategory;
-		if (name) product.name = name;
 		if (image) product.image = image;
 		if (price) product.price = price;
-		if (description) product.description = description;
 		if (colors) product.colors = colors;
 		await product.save();
 		res.json(formatProduct(product));

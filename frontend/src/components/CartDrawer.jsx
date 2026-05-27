@@ -74,7 +74,7 @@ export default function CartDrawer({ open, onClose }) {
 							<article key={item._id} className="cart-item">
 								<img
 									src={getFullImageUrl(item.image)}
-									alt={item.name}
+									alt="Product"
 									className="cart-item__image"
 									loading="lazy"
 									onError={(e) => {
@@ -82,7 +82,6 @@ export default function CartDrawer({ open, onClose }) {
 									}}
 								/>
 								<div>
-									<h3 className="cart-item__name">{item.name}</h3>
 									<p className="cart-item__price">₹{Number(item.price).toLocaleString('en-IN')}</p>
 									<div className="cart-item__qty">
 										<button

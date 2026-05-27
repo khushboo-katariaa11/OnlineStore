@@ -4,10 +4,8 @@ const { body, param, query } = require('express-validator');
 const productValidation = [
   body('category').notEmpty().withMessage('Category is required'),
   body('subcategory').optional().isString().withMessage('Subcategory must be a string'),
-  body('name').notEmpty().withMessage('Name is required'),
   // image validation removed; multer handles file upload
   body('price').isNumeric().withMessage('Price must be a number'),
-  body('description').notEmpty().withMessage('Description is required'),
   body('colors')
     .custom((value) => {
       if (Array.isArray(value)) {

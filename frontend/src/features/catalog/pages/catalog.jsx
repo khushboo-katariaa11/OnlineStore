@@ -166,7 +166,7 @@ const CatalogPage = () => {
 	const handleAddToCart = useCallback(
 		(product) => {
 			addToCart(product);
-			showToast(`${product.name} added to cart`);
+			showToast('Item added to cart');
 		},
 		[addToCart, showToast]
 	);
@@ -238,7 +238,7 @@ const CatalogPage = () => {
 						>
 							<img
 								src={getFullImageUrl(product.image)}
-								alt={product.name}
+								alt="Product"
 								className="product-card__img"
 								loading="lazy"
 								onError={(e) => {
@@ -248,7 +248,6 @@ const CatalogPage = () => {
 							<span className="product-card__view">View</span>
 						</button>
 						<div className="product-card__body">
-							<h3 className="product-card__name">{product.name}</h3>
 							<p className="product-card__meta">{product.category}</p>
 							<div className="product-card__footer">
 								<p className="product-card__price">
@@ -258,7 +257,7 @@ const CatalogPage = () => {
 									type="button"
 									className="product-card__add"
 									onClick={() => handleAddToCart(product)}
-									aria-label={`Add ${product.name} to cart`}
+									aria-label="Add to cart"
 								>
 									Add to Cart
 								</button>

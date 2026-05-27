@@ -13,21 +13,12 @@ const productSchema = new mongoose.Schema({
 		trim: true,
 		default: ''
 	},
-	name: {
-		type: String,
-		required: true,
-		trim: true
-	},
 	image: {
 		type: String,
 		required: true
 	},
 	price: {
 		type: Number,
-		required: true
-	},
-	description: {
-		type: String,
 		required: true
 	},
 	colors: {

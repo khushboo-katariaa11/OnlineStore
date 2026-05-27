@@ -29,7 +29,6 @@ const ProductModal = ({ product, onClose, onAddToCart }) => {
 				onClick={(e) => e.stopPropagation()}
 				role="dialog"
 				aria-modal="true"
-				aria-labelledby="product-modal-title"
 			>
 				<button type="button" className="product-modal__close" onClick={onClose} aria-label="Close">
 					<CloseIcon />
@@ -39,7 +38,7 @@ const ProductModal = ({ product, onClose, onAddToCart }) => {
 					<div className="product-modal__image-wrap">
 						<img
 							src={getFullImageUrl(product.image)}
-							alt={product.name}
+							alt="Product image"
 							className="product-modal__image"
 							onError={(e) => {
 								e.target.src = PLACEHOLDER_IMAGE;
@@ -48,10 +47,6 @@ const ProductModal = ({ product, onClose, onAddToCart }) => {
 					</div>
 
 					<div className="product-modal__details">
-						<h2 id="product-modal-title" className="product-modal__name">
-							{product.name}
-						</h2>
-
 						<div className="product-modal__badges">
 							<span className="badge badge--category">{product.category}</span>
 							{product.subcategory && (
@@ -62,8 +57,6 @@ const ProductModal = ({ product, onClose, onAddToCart }) => {
 						<p className="product-modal__price">
 							₹{Number(product.price).toLocaleString('en-IN')}
 						</p>
-
-						<p className="product-modal__description">{product.description}</p>
 
 						{product.colors?.length > 0 && (
 							<div className="product-modal__colors">
